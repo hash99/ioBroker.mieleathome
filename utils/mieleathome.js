@@ -1,4 +1,3 @@
-
 var request = require("request");
 var req_sync = require('sync-request');
 var BaseURL = 'https://api.mcs3.miele.com/';
@@ -176,7 +175,7 @@ class mieleathome {
         
         request(options, function (error, response, body){
                 if (response.statusCode==200){
-                P=JSON.parse(body);
+                var P=JSON.parse(body);
                 return callback(false,P.access_token,P.refresh_token);
                 }
                 else{
@@ -228,18 +227,18 @@ class mieleathome {
                 case 401: //Unauthorized
                 this.NRefreshToken(Token,Refresh_Token,function(err,access_token,refresh_token){
                                    if(!err){
-                                   this.NSendRequest(Refresh_Token,Endpoint,Method,acsess_token,Send_Body,function(err,data){
+                                   this.NSendRequest(Refresh_Token,Endpoint,Method,access_token,Send_Body,function(err,data){
                                                      if(!err){return callback(false,data,access_token,refresh_token)}
                                                      else{return callback(true,null,access_token,refresh_token)}
                                                      });
                                    }
                                    else{return callback(true,null,null,null);}
-                                   });
+                                   }.bind(this));
                 break;
                 default:
                 return callback(true,null,null,null);
                 }
-                });
+                }.bind(this));
     }
     NGetDevices(Refresh_Token,Access_Token,callback){
         this.NSendRequest(Refresh_Token,'v1/devices/','GET',Access_Token,'',function(err,data,atoken,rtoken){
@@ -336,5 +335,3 @@ class mieleathome {
 }
 
 module.exports = mieleathome;
-
-
